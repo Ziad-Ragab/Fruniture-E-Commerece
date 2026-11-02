@@ -98,6 +98,8 @@ function renderStars(rate) {
 function displayProducts(products, limit = 16) {
     const productGrid = document.querySelector('.product-grid');
     productGrid.innerHTML = '';
+    const resultsCount = document.querySelector('.results-count');
+    if (resultsCount) resultsCount.textContent = `Showing ${Math.min(products.length, limit)} of ${products.length} results`;
     const productsToShow = products.slice(0, limit);
 
     productsToShow.forEach(product => {
