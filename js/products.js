@@ -103,6 +103,7 @@ function displayProducts(products, limit = 16) {
     productsToShow.forEach(product => {
         const card = document.createElement('div');
         card.classList.add('product-card');
+        card.dataset.productId = product.id;
         card.innerHTML = `
             <div class="image-gallery">
                 <a href="./description.html?id=${product.id}"><img src="${product.images[0]}" alt="${product.title}" class="card-background"></a>
@@ -172,7 +173,7 @@ function displayProducts(products, limit = 16) {
             const productName = productCard.querySelector('.product-info h3').textContent;
             const productDescription = productCard.querySelector('.product-info p').textContent;
             const productPrice = productCard.querySelector('.product-info .price').textContent;
-            const product = allProducts.find(p => p.title === productName);
+            const product = allProducts.find(p => p.id === Number(productCard.dataset.productId));
 
             if (!product) {
                 console.error(`Product with title ${productName} not found!`);
@@ -204,6 +205,7 @@ function displayProducts(products, limit = 16) {
             `;
             modalDetails.appendChild(ratingDiv);
 
+            modal.dataset.productId = product.id;
             modal.style.display = 'flex';
 
             modalButtons.forEach((btn, btnIndex) => {
@@ -221,7 +223,7 @@ function displayProducts(products, limit = 16) {
     // أحداث أزرار التحكم في الصور
     productCards.forEach(card => {
         const productName = card.querySelector('.product-info h3').textContent;
-        const product = allProducts.find(p => p.title === productName);
+        const product = allProducts.find(p => p.id === Number(card.dataset.productId));
         const imageElement = card.querySelector('.card-background');
         const controlButtons = card.querySelectorAll('.controls .btn');
 
@@ -303,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (modalAddToCart) {
         modalAddToCart.addEventListener('click', function () {
             const productName = document.getElementById('modalName').textContent;
-            const product = allProducts.find(p => p.title === productName);
+            const product = allProducts.find(p => p.id === Number(document.getElementById("quickViewModal").dataset.productId));
             
             if (product) {
                 addToCart(product.id);
