@@ -91,7 +91,8 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch("../data/products.json")
       .then(response => response.json())
       .then(data => {
-          const products = data.furniture.slice(0, 8); // أخذ أول 8 منتجات فقط
+          const products = data.furniture.slice(0, 8);
+          window.featuredDemoProducts = products; // أخذ أول 8 منتجات فقط
           const featuredContainer = document.querySelector('.featured-products');
           
           if (!featuredContainer) return;
@@ -101,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
           products.forEach(product => {
               const productCard = document.createElement('div');
               productCard.classList.add('product-card');
+              productCard.dataset.images = JSON.stringify(product.images);
               productCard.innerHTML = `
                   <div class="image-gallery">
                       <a href="./description.html?id=${product.id}"><img src="${product.images[0]}" alt="${product.title}" class="card-background"></a>
@@ -195,7 +197,8 @@ function addProductEvents() {
 
 // تأكد من وجود دالة addToCart بشكل عام
 function addToCart(productId) {
-  const product = allProducts.find(p => p.id === productId);
+  // Demo only: frontend cart stored on the current device.
+  const product = window.featuredDemoProducts?.find(p => p.id === productId);
   
   if (!product) {
       console.error('Product not found!');
@@ -221,3 +224,6 @@ function addToCart(productId) {
   showToast(`${product.title} added to cart!`);
   updateCartCounter();
 }
+
+function showToast(message) { const toast = document.createElement("div"); toast.textContent = message; toast.setAttribute("role","status"); Object.assign(toast.style,{position:"fixed",bottom:"24px",right:"24px",padding:"12px 20px",background:"#1f3640",color:"white",borderRadius:"8px",zIndex:"9999"}); document.body.appendChild(toast); setTimeout(()=>toast.remove(),2300); }
+function updateCartCounter(){ const el=document.querySelector(".cart-counter"); if(el){const cart=JSON.parse(localStorage.getItem("cart")||"[]");el.textContent=cart.reduce((n,p)=>n+p.quantity,0);}}
