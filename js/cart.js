@@ -41,18 +41,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Add event listeners to quantity inputs
         document.querySelectorAll('.quantity').forEach(input => {
-            input.addEventListener('change', function() {
+            input.addEventListener('input', function() {
                 const index = parseInt(this.dataset.index);
                 const newQuantity = parseInt(this.value);
                 
                 if (newQuantity > 0) {
                     cart[index].quantity = newQuantity;
                     localStorage.setItem('cart', JSON.stringify(cart));
-                    updateCartDisplay();
-                } else {
+                    // Update displayed totals without destroying the focused input.
+                    const subtotal = cart.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
+                    if (subtotalElement) subtotalElement.textContent = subtotal.toFixed(2);
+                    if (totalElement) totalElement.textContent = subtotal.toFixed(2);
+                    const rowTotal = this.closest('tr')?.querySelector('.subtotal');
+                    if (rowTotal) rowTotal.textContent = (Number(cart[index].price) * newQuantity).toFixed(2) + ' EGP';
+                    updateCartCounter();
+                } else if (this.value !== '') {
                     this.value = cart[index].quantity; // Reset to previous value
                 }
             });
+            input.addEventListener('change', function() { if (!this.value || Number(this.value) < 1) this.value = cart[Number(this.dataset.index)].quantity; });
         });
 
         // Add event listeners to remove buttons
@@ -83,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
         checkoutButton.addEventListener('click', function() {
             if (cart.length > 0) {
                 // Here you would typically redirect to checkout page
-                alert('Proceeding to checkout!');
+                alert('Demo only: checkout and payment are not enabled.');
                 // localStorage.removeItem('cart'); // Clear cart after checkout
                 // updateCartDisplay();
                 // updateCartCounter();
